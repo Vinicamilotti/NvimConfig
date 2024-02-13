@@ -17,6 +17,7 @@ return {
           "jdtls",
           "gradle_ls",
           "pyright",
+          "omnisharp",
         },
       })
     end,
@@ -47,5 +48,24 @@ return {
       vim.keymap.set("n", "dD", vim.lsp.buf.declaration, {})
       vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
     end,
+  },
+  {
+    "Hoffs/omnisharp-extended-lsp.nvim",
+    config = function()
+      local pid = vim.fn.getpid()
+      local omnisharp_bin = "/usr/bin/omnisharp"
+      local config = {
+        handlers = {
+          ["textDocument/definition"] = require('omnisharp_extended').handler,
+        },
+        cmd = { omnisharp_bin, '--languageserver', '--hostPID', tostring(pid) },
+        capabilities = require("cmp_nvim_lsp").default_capabilities(),
+        enable_roslyn_analyzers = true,
+        organize_imports_on_format = true,
+        enable_import_completion = true,
+      }
+      require("lspconfig").omnisharp.setup(config)
+    end
+
   },
 }
